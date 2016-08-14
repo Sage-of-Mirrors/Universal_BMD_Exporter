@@ -15,7 +15,7 @@ namespace BMDExporter
     {
         static void Main(string[] args)
         {
-            string inputFile = @"C:\Program Files (x86)\SZS Tools\TestFBX2.fbx";
+            string inputFile = @"C:\Program Files (x86)\SZS Tools\Amori.fbx";
 
             List<Batch> Batches = new List<Batch>(); // A list of the meshes in the scene
 

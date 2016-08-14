@@ -44,11 +44,6 @@ namespace BMDExporter.BMD
                         MasterAttributes.Add(attrib);
                 }
 
-                MasterAttributes.Add(VertexAttributes.NullAttr);
-
-                // Just to make sure the attributes are in numerical order
-                MasterAttributes.Sort();
-
                 // We're going to go through each face in this batch.
                 // For each face, we're going to go through each index that the face has. There should be 3, because faces are only supported as triangles.
                 // For each index, we're going to go through each active attribute that this batch has.
@@ -146,6 +141,11 @@ namespace BMDExporter.BMD
                     }
                 }
             }
+
+            MasterAttributes.Add(VertexAttributes.NullAttr);
+
+            // Just to make sure the attributes are in numerical order
+            MasterAttributes.Sort();
         }
 
         public void WriteVTX1(EndianBinaryWriter writer)
