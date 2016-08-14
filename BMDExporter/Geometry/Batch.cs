@@ -15,6 +15,7 @@ namespace BMDExporter.Geometry
         public List<Color4D>[] VertexColors; // RGBA Color data for vertexes. There can be up to 2 sets.
         public List<Vector3D> VertexNormals; // Normal data for vertexes
         public List<Vector3D>[] VertexUVWs; // UVW data for vertexes. We're only going to use UV for the BMD though, and there can be up to 8 different sets.
+        public List<Face> FaceIndexes; // Vertex index data for faces
 
         public Batch()
         {
@@ -34,9 +35,12 @@ namespace BMDExporter.Geometry
             VertexNormals = new List<Vector3D>();
             VertexUVWs = new List<Vector3D>[8] { new List<Vector3D>(), new List<Vector3D>(), new List<Vector3D>(), new List<Vector3D>(),
                                                  new List<Vector3D>(), new List<Vector3D>(), new List<Vector3D>(), new List<Vector3D>()};
+            FaceIndexes = new List<Face>();
 
             ActiveAttributes.Add(VertexAttributes.Position);
             VertexPositions = mesh.Vertices;
+
+            FaceIndexes = mesh.Faces;
 
             if (mesh.HasNormals)
             {
@@ -58,6 +62,8 @@ namespace BMDExporter.Geometry
                 ActiveAttributes.Add(VertexAttributes.Tex0 + i);
                 VertexUVWs[i] = mesh.TextureCoordinateChannels[i];
             }
+
+            ActiveAttributes.Sort();
         }
     }
 }

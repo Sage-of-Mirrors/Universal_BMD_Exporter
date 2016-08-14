@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 using BMDExporter.Geometry;
+using BMDExporter.BMD;
 using Assimp;
+using GameFormatReader.Common;
 
 namespace BMDExporter
 {
@@ -12,7 +15,7 @@ namespace BMDExporter
     {
         static void Main(string[] args)
         {
-            string inputFile = @"C:\Program Files (x86)\SZS Tools\MazeRoom\MazeModel.obj";
+            string inputFile = @"C:\Program Files (x86)\SZS Tools\TestFBX2.fbx";
 
             List<Batch> Batches = new List<Batch>(); // A list of the meshes in the scene
 
@@ -22,14 +25,13 @@ namespace BMDExporter
             foreach (Mesh mesh in scene.Meshes)
                 Batches.Add(new Batch(mesh));
 
-            foreach (Batch bat in Batches)
-            {
-                Console.WriteLine(string.Format("Batch count: {0}", Batches.Count));
-                Console.WriteLine(string.Format("Number of vertexes: {0}\nNumber of vertex colors: {1}\nNumber of normals: {2}\nNumber of UVs: {3}\n\n",
-                    bat.VertexPositions.Count, bat.VertexColors[0].Count, bat.VertexNormals.Count, bat.VertexUVWs[0].Count));
-            }
+            VTX1 vtx = new VTX1(Batches);
 
-            Console.ReadLine();
+            using (FileStream stream = new FileStream(@"C:\Program Files (x86)\SZS Tools\vtx1test.bin", FileMode.Create, FileAccess.Write))
+            {
+                EndianBinaryWriter writer = new EndianBinaryWriter(stream, Endian.Big);
+                vtx.WriteVTX1(writer);
+            }
         }
     }
 }
