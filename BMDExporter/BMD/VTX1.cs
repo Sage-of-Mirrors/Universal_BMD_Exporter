@@ -19,7 +19,6 @@ namespace BMDExporter.BMD
         public List<Color4D>[] VertexColors; // RGBA Color data for vertexes. There can be up to 2 sets.
         public List<Vector3D> VertexNormals; // Normal data for vertexes
         public List<Vector3D>[] VertexUVWs; // UVW data for vertexes. We're only going to use UV for the BMD though, and there can be up to 8 different sets.
-        public List<int> FaceIndexes; // List of indexes for face attributes
 
         public VTX1()
         {
@@ -34,7 +33,6 @@ namespace BMDExporter.BMD
             VertexNormals = new List<Vector3D>();
             VertexUVWs = new List<Vector3D>[8] { new List<Vector3D>(), new List<Vector3D>(), new List<Vector3D>(), new List<Vector3D>(),
                                                  new List<Vector3D>(), new List<Vector3D>(), new List<Vector3D>(), new List<Vector3D>()};
-            FaceIndexes = new List<int>();
 
             foreach (Batch bat in batches)
             {
@@ -50,7 +48,7 @@ namespace BMDExporter.BMD
                 // Finally, for each attribute, we're going to add data to the corresponding list (Position -> VertexPositions, 
                 // Normal -> VertexNormals, etc) if necessary, and then fix the face's index
                 // so that it points to the correct data in the global list.
-                foreach (Face face in bat.FaceIndexes)
+                foreach (Face face in bat.Faces)
                 {
                     for (int i = 0; i < face.IndexCount; i++)
                     {
@@ -66,73 +64,73 @@ namespace BMDExporter.BMD
 
                                     // Then we set the index equal to the index of the position if it existed, or to the
                                     // position we just added if it didn't.
-                                    FaceIndexes.Add(VertexPositions.IndexOf(bat.VertexPositions[face.Indices[i]]));
+                                    bat.FaceIndexes.Add((short)VertexPositions.IndexOf(bat.VertexPositions[face.Indices[i]]));
                                     break;
                                 case VertexAttributes.Normal:
                                     if (!VertexNormals.Contains(bat.VertexNormals[face.Indices[i]]))
                                         VertexNormals.Add(bat.VertexNormals[face.Indices[i]]);
 
-                                    FaceIndexes.Add(VertexNormals.IndexOf(bat.VertexNormals[face.Indices[i]]));
+                                    bat.FaceIndexes.Add((short)VertexNormals.IndexOf(bat.VertexNormals[face.Indices[i]]));
                                     break;
                                 case VertexAttributes.Color0:
                                     if (!VertexColors[0].Contains(bat.VertexColors[0][face.Indices[i]]))
                                         VertexColors[0].Add(bat.VertexColors[0][face.Indices[i]]);
 
-                                    FaceIndexes.Add(VertexColors[0].IndexOf(bat.VertexColors[0][face.Indices[i]]));
+                                    bat.FaceIndexes.Add((short)VertexColors[0].IndexOf(bat.VertexColors[0][face.Indices[i]]));
                                     break;
                                 case VertexAttributes.Color1:
                                     if (!VertexColors[1].Contains(bat.VertexColors[1][face.Indices[i]]))
                                         VertexColors[1].Add(bat.VertexColors[1][face.Indices[i]]);
 
-                                    FaceIndexes.Add(VertexColors[1].IndexOf(bat.VertexColors[1][face.Indices[i]]));
+                                    bat.FaceIndexes.Add((short)VertexColors[1].IndexOf(bat.VertexColors[1][face.Indices[i]]));
                                     break;
                                 case VertexAttributes.Tex0:
                                     if (!VertexUVWs[0].Contains(bat.VertexUVWs[0][face.Indices[i]]))
                                         VertexUVWs[0].Add(bat.VertexUVWs[0][face.Indices[i]]);
 
-                                    FaceIndexes.Add(VertexUVWs[0].IndexOf(bat.VertexUVWs[0][face.Indices[i]]));
+                                    bat.FaceIndexes.Add((short)VertexUVWs[0].IndexOf(bat.VertexUVWs[0][face.Indices[i]]));
                                     break;
                                 case VertexAttributes.Tex1:
                                     if (!VertexUVWs[1].Contains(bat.VertexUVWs[1][face.Indices[i]]))
                                         VertexUVWs[1].Add(bat.VertexUVWs[1][face.Indices[i]]);
 
-                                    FaceIndexes.Add(VertexUVWs[1].IndexOf(bat.VertexUVWs[1][face.Indices[i]]));
+                                    bat.FaceIndexes.Add((short)VertexUVWs[1].IndexOf(bat.VertexUVWs[1][face.Indices[i]]));
                                     break;
                                 case VertexAttributes.Tex2:
                                     if (!VertexUVWs[2].Contains(bat.VertexUVWs[2][face.Indices[i]]))
                                         VertexUVWs[2].Add(bat.VertexUVWs[2][face.Indices[i]]);
 
-                                    FaceIndexes.Add(VertexUVWs[2].IndexOf(bat.VertexUVWs[2][face.Indices[i]]));
+                                    bat.FaceIndexes.Add((short)VertexUVWs[2].IndexOf(bat.VertexUVWs[2][face.Indices[i]]));
                                     break;
                                 case VertexAttributes.Tex3:
                                     if (!VertexUVWs[3].Contains(bat.VertexUVWs[3][face.Indices[i]]))
                                         VertexUVWs[3].Add(bat.VertexUVWs[3][face.Indices[i]]);
 
-                                    FaceIndexes.Add(VertexUVWs[3].IndexOf(bat.VertexUVWs[3][face.Indices[i]]));
+                                    bat.FaceIndexes.Add((short)VertexUVWs[3].IndexOf(bat.VertexUVWs[3][face.Indices[i]]));
                                     break;
                                 case VertexAttributes.Tex4:
                                     if (!VertexUVWs[4].Contains(bat.VertexUVWs[4][face.Indices[i]]))
                                         VertexUVWs[4].Add(bat.VertexUVWs[4][face.Indices[i]]);
 
-                                    FaceIndexes.Add(VertexUVWs[4].IndexOf(bat.VertexUVWs[4][face.Indices[i]]));
+                                    bat.FaceIndexes.Add((short)VertexUVWs[4].IndexOf(bat.VertexUVWs[4][face.Indices[i]]));
                                     break;
                                 case VertexAttributes.Tex5:
                                     if (!VertexUVWs[5].Contains(bat.VertexUVWs[5][face.Indices[i]]))
                                         VertexUVWs[5].Add(bat.VertexUVWs[5][face.Indices[i]]);
 
-                                    FaceIndexes.Add(VertexUVWs[5].IndexOf(bat.VertexUVWs[5][face.Indices[i]]));
+                                    bat.FaceIndexes.Add((short)VertexUVWs[5].IndexOf(bat.VertexUVWs[5][face.Indices[i]]));
                                     break;
                                 case VertexAttributes.Tex6:
                                     if (!VertexUVWs[6].Contains(bat.VertexUVWs[6][face.Indices[i]]))
                                         VertexUVWs[6].Add(bat.VertexUVWs[6][face.Indices[i]]);
 
-                                    FaceIndexes.Add(VertexUVWs[6].IndexOf(bat.VertexUVWs[6][face.Indices[i]]));
+                                    bat.FaceIndexes.Add((short)VertexUVWs[6].IndexOf(bat.VertexUVWs[6][face.Indices[i]]));
                                     break;
                                 case VertexAttributes.Tex7:
                                     if (!VertexUVWs[7].Contains(bat.VertexUVWs[7][face.Indices[i]]))
                                         VertexUVWs[7].Add(bat.VertexUVWs[7][face.Indices[i]]);
 
-                                    FaceIndexes.Add(VertexUVWs[7].IndexOf(bat.VertexUVWs[7][face.Indices[i]]));
+                                    bat.FaceIndexes.Add((short)VertexUVWs[7].IndexOf(bat.VertexUVWs[7][face.Indices[i]]));
                                     break;
                                 default:
                                     throw new ArgumentException(string.Format("Unsupported vertex attribute {0}!", attr.ToString()));
@@ -207,7 +205,7 @@ namespace BMDExporter.BMD
                 }
             }
 
-            Util.PadStream(writer, 32);
+            Util.PadStream(writer, 32, true);
 
             // Attribute data
             foreach (VertexAttributes attrib in MasterAttributes)
@@ -277,10 +275,10 @@ namespace BMDExporter.BMD
                         break;
                 }
 
-                Util.PadStream(writer, 32);
+                Util.PadStream(writer, 32, true);
             }
 
-            Util.PadStream(writer, 32);
+            Util.PadStream(writer, 32, true);
 
             // Go to and write section length
             writer.BaseStream.Position = 4;

@@ -27,10 +27,12 @@ namespace BMDExporter
 
             VTX1 vtx = new VTX1(Batches);
 
-            using (FileStream stream = new FileStream(@"C:\Program Files (x86)\SZS Tools\vtx1test.bin", FileMode.Create, FileAccess.Write))
+            SHP1 shp = new SHP1(Batches);
+
+            using (FileStream stream = new FileStream(@"C:\Program Files (x86)\SZS Tools\shp1test.bin", FileMode.Create, FileAccess.Write))
             {
                 EndianBinaryWriter writer = new EndianBinaryWriter(stream, Endian.Big);
-                vtx.WriteVTX1(writer);
+                shp.WriteSHP1(writer);
             }
         }
     }

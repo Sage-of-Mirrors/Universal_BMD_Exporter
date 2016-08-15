@@ -15,7 +15,12 @@ namespace BMDExporter.Geometry
         public List<Color4D>[] VertexColors; // RGBA Color data for vertexes. There can be up to 2 sets.
         public List<Vector3D> VertexNormals; // Normal data for vertexes
         public List<Vector3D>[] VertexUVWs; // UVW data for vertexes. We're only going to use UV for the BMD though, and there can be up to 8 different sets.
-        public List<Face> FaceIndexes; // Vertex index data for faces
+        public List<Face> Faces; // Vertex index data for faces
+        public List<short> FaceIndexes;
+
+        public float BoundingSphereRadius; // Radius of the bounding sphere for this batch
+        public Vector3D BoundingMin; // Minimum of bounding box
+        public Vector3D BoundingMax; // Maximum of bounding box
 
         public Batch()
         {
@@ -35,12 +40,13 @@ namespace BMDExporter.Geometry
             VertexNormals = new List<Vector3D>();
             VertexUVWs = new List<Vector3D>[8] { new List<Vector3D>(), new List<Vector3D>(), new List<Vector3D>(), new List<Vector3D>(),
                                                  new List<Vector3D>(), new List<Vector3D>(), new List<Vector3D>(), new List<Vector3D>()};
-            FaceIndexes = new List<Face>();
+            Faces = new List<Face>();
+            FaceIndexes = new List<short>();
 
             ActiveAttributes.Add(VertexAttributes.Position);
             VertexPositions = mesh.Vertices;
 
-            FaceIndexes = mesh.Faces;
+            Faces = mesh.Faces;
 
             if (mesh.HasNormals)
             {
@@ -64,6 +70,45 @@ namespace BMDExporter.Geometry
             }
 
             ActiveAttributes.Sort();
+
+            // Let's get the bounding info
+
+            float MinX = float.MaxValue;
+            float MinY = float.MaxValue;
+            float MinZ = float.MaxValue;
+
+            float MaxX = float.MinValue;
+            float MaxY = float.MinValue;
+            float MaxZ = float.MinValue;
+
+            foreach (Vector3D vec in VertexPositions)
+            {
+                if (vec.X > MaxX)
+                    MaxX = vec.X;
+                if (vec.X < MinX)
+                    MinX = vec.X;
+
+                if (vec.Y > MaxY)
+                    MaxY = vec.Y;
+                if (vec.Y < MinY)
+                    MinY = vec.Y;
+
+                if (vec.Z > MaxZ)
+                    MaxZ = vec.Z;
+                if (vec.Z < MinZ)
+                    MinZ = vec.Z;
+            }
+
+            BoundingMin = new Vector3D(MinX, MinY, MinZ);
+            BoundingMax = new Vector3D(MaxX, MaxY, MaxZ);
+
+            Vector3D boxCenter = new Vector3D(MinX + MaxX / 2, MinY + MaxY / 2, MinZ + MaxZ / 2);
+
+            BoundingSphereRadius = (boxCenter - BoundingMin).Length();
+
+            float maxFromCenter = (boxCenter - BoundingMax).Length();
+            if (maxFromCenter > BoundingSphereRadius)
+                BoundingSphereRadius = maxFromCenter;
         }
     }
 }
