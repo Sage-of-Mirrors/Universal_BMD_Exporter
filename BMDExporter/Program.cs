@@ -31,10 +31,12 @@ namespace BMDExporter
 
             EVP1 evp = new EVP1(Batches);
 
+            DRW1 drw = new DRW1(Batches);
+
             using (FileStream stream = new FileStream(@"C:\Program Files (x86)\SZS Tools\evp1test.bin", FileMode.Create, FileAccess.Write))
             {
                 EndianBinaryWriter writer = new EndianBinaryWriter(stream, Endian.Big);
-                evp.WriteEVP1(writer);
+                drw.WriteDRW1(writer);
             }
         }
     }
