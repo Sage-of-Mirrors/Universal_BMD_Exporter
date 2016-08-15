@@ -29,10 +29,12 @@ namespace BMDExporter
 
             SHP1 shp = new SHP1(Batches);
 
-            using (FileStream stream = new FileStream(@"C:\Program Files (x86)\SZS Tools\shp1test.bin", FileMode.Create, FileAccess.Write))
+            EVP1 evp = new EVP1(Batches);
+
+            using (FileStream stream = new FileStream(@"C:\Program Files (x86)\SZS Tools\evp1test.bin", FileMode.Create, FileAccess.Write))
             {
                 EndianBinaryWriter writer = new EndianBinaryWriter(stream, Endian.Big);
-                shp.WriteSHP1(writer);
+                evp.WriteEVP1(writer);
             }
         }
     }

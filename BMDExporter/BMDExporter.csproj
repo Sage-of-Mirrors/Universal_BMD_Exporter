@@ -53,6 +53,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BMD\EVP1.cs" />
     <Compile Include="BMD\SHP1.cs" />
     <Compile Include="BMD\VTX1.cs" />
     <Compile Include="Geometry\Batch.cs" />
