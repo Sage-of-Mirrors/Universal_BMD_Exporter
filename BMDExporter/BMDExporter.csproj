@@ -55,6 +55,8 @@
   <ItemGroup>
     <Compile Include="BMD\DRW1.cs" />
     <Compile Include="BMD\EVP1.cs" />
+    <Compile Include="BMD\HierarchyDataTypes.cs" />
+    <Compile Include="BMD\INF1.cs" />
     <Compile Include="BMD\JNT1.cs" />
     <Compile Include="BMD\SHP1.cs" />
     <Compile Include="BMD\VTX1.cs" />

@@ -35,10 +35,12 @@ namespace BMDExporter
 
             JNT1 jnt = new JNT1(Batches);
 
-            using (FileStream stream = new FileStream(@"C:\Program Files (x86)\SZS Tools\jnt1test.bin", FileMode.Create, FileAccess.Write))
+            INF1 inf = new INF1(Batches);
+
+            using (FileStream stream = new FileStream(@"C:\Program Files (x86)\SZS Tools\inf1test.bin", FileMode.Create, FileAccess.Write))
             {
                 EndianBinaryWriter writer = new EndianBinaryWriter(stream, Endian.Big);
-                jnt.WriteJNT1(writer);
+                inf.WriteINF1(writer, vtx.VertexPositions.Count);
             }
         }
     }
