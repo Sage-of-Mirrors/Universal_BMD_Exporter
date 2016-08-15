@@ -33,10 +33,12 @@ namespace BMDExporter
 
             DRW1 drw = new DRW1(Batches);
 
-            using (FileStream stream = new FileStream(@"C:\Program Files (x86)\SZS Tools\evp1test.bin", FileMode.Create, FileAccess.Write))
+            JNT1 jnt = new JNT1(Batches);
+
+            using (FileStream stream = new FileStream(@"C:\Program Files (x86)\SZS Tools\jnt1test.bin", FileMode.Create, FileAccess.Write))
             {
                 EndianBinaryWriter writer = new EndianBinaryWriter(stream, Endian.Big);
-                drw.WriteDRW1(writer);
+                jnt.WriteJNT1(writer);
             }
         }
     }

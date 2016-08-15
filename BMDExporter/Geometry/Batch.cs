@@ -9,6 +9,7 @@ namespace BMDExporter.Geometry
 {
     class Batch
     {
+        public string Name;
         public List<VertexAttributes> ActiveAttributes; // The attributes that the batch has
         public List<Vector3D> VertexPositions; // X/Y/Z data for vertexes. Any model will have these
         // The following are not required but often present
@@ -34,6 +35,8 @@ namespace BMDExporter.Geometry
                 // Mesh with no vertexes? Is that even a mesh?
                 throw new ArgumentException(string.Format("Mesh {0} had no vertexes!", mesh.Name));
             }
+
+            Name = mesh.Name;
 
             ActiveAttributes = new List<VertexAttributes>();
             VertexColors = new List<Color4D>[2] { new List<Color4D>(), new List<Color4D>() };

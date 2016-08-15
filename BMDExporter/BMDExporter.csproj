@@ -55,9 +55,11 @@
   <ItemGroup>
     <Compile Include="BMD\DRW1.cs" />
     <Compile Include="BMD\EVP1.cs" />
+    <Compile Include="BMD\JNT1.cs" />
     <Compile Include="BMD\SHP1.cs" />
     <Compile Include="BMD\VTX1.cs" />
     <Compile Include="Geometry\Batch.cs" />
+    <Compile Include="Geometry\Joint.cs" />
     <Compile Include="Geometry\VertexAttributes.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
