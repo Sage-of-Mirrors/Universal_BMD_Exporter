@@ -29,7 +29,6 @@ namespace BMDExporter.BMD
             {
                 //if (AttributesPerBatch.)
                 AttributesPerBatch.AddRange(bat.ActiveAttributes);
-                AttributesPerBatch.Add(VertexAttributes.NullAttr);
             }
         }
 
@@ -45,13 +44,16 @@ namespace BMDExporter.BMD
             for (int i = 0; i < 7; i++)
                 writer.Write((int)0);
 
+            int attribMatOffset = 0;
+
             // Write batch info
             for (int i = 0; i < Batches.Count; i++)
             {
                 writer.Write((short)0x00FF); // Unknown
                 writer.Write((short)1); // Packet count
-                writer.Write((short)i); // Index to attribute data
-                writer.Write((short)i); // Index to matrix info
+                writer.Write((short)attribMatOffset); // offset to attribute data
+                writer.Write((short)i); // offset to matrix info
+                attribMatOffset += Batches[i].ActiveAttributes.Count * 8;
                 writer.Write((short)i); // Index to packet info
                 writer.Write(ushort.MaxValue); // Padding
 
@@ -110,7 +112,7 @@ namespace BMDExporter.BMD
             foreach (Batch bat in Batches)
             {
                 writer.Write((byte)0x90);
-                writer.Write((short)bat.Faces.Count);
+                writer.Write((short)bat.VertexPositions.Count);
                 foreach (short shr in bat.FaceIndexes)
                     writer.Write(shr);
                 Util.PadStream(writer, 32, false);

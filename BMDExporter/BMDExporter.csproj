@@ -45,6 +45,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -58,13 +59,37 @@
     <Compile Include="BMD\HierarchyDataTypes.cs" />
     <Compile Include="BMD\INF1.cs" />
     <Compile Include="BMD\JNT1.cs" />
+    <Compile Include="BMD\MAT3.cs" />
     <Compile Include="BMD\SHP1.cs" />
+    <Compile Include="BMD\TEX1.cs" />
     <Compile Include="BMD\VTX1.cs" />
     <Compile Include="Geometry\Batch.cs" />
     <Compile Include="Geometry\Joint.cs" />
     <Compile Include="Geometry\VertexAttributes.cs" />
+    <Compile Include="Materials\AlphaCompare.cs" />
+    <Compile Include="Materials\BlendMode.cs" />
+    <Compile Include="Materials\ChannelControl.cs" />
+    <Compile Include="Materials\Color.cs" />
+    <Compile Include="Materials\Fog.cs" />
+    <Compile Include="Materials\GXEnums.cs" />
+    <Compile Include="Materials\IndirectTexturing.cs" />
+    <Compile Include="Materials\IndTevOrder.cs" />
+    <Compile Include="Materials\IndTexMatrix.cs" />
+    <Compile Include="Materials\IndTexScale.cs" />
+    <Compile Include="Materials\Material.cs" />
+    <Compile Include="Materials\NBTScale.cs" />
+    <Compile Include="Materials\TevOrder.cs" />
+    <Compile Include="Materials\TevStage.cs" />
+    <Compile Include="Materials\TevSwapMode.cs" />
+    <Compile Include="Materials\TevSwapModeTables.cs" />
+    <Compile Include="Materials\TexCoordGen.cs" />
+    <Compile Include="Materials\TexMatrix.cs" />
+    <Compile Include="Materials\ZMode.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Textures\BinaryTextureImage.cs" />
+    <Compile Include="Textures\ImageDataFormat.cs" />
+    <Compile Include="Textures\TGA.cs" />
     <Compile Include="Util\Util.cs" />
   </ItemGroup>
   <ItemGroup>

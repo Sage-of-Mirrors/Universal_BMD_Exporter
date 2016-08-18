@@ -23,6 +23,8 @@ namespace BMDExporter.Geometry
         public Vector3D BoundingMin; // Minimum of bounding box
         public Vector3D BoundingMax; // Maximum of bounding box
 
+        public int MaterialIndex;
+
         public Batch()
         {
 
@@ -37,6 +39,7 @@ namespace BMDExporter.Geometry
             }
 
             Name = mesh.Name;
+            MaterialIndex = mesh.MaterialIndex;
 
             ActiveAttributes = new List<VertexAttributes>();
             VertexColors = new List<Color4D>[2] { new List<Color4D>(), new List<Color4D>() };
@@ -71,6 +74,8 @@ namespace BMDExporter.Geometry
                 ActiveAttributes.Add(VertexAttributes.Tex0 + i);
                 VertexUVWs[i] = mesh.TextureCoordinateChannels[i];
             }
+
+            ActiveAttributes.Add(VertexAttributes.NullAttr);
 
             ActiveAttributes.Sort();
 

@@ -132,6 +132,8 @@ namespace BMDExporter.BMD
 
                                     bat.FaceIndexes.Add((short)VertexUVWs[7].IndexOf(bat.VertexUVWs[7][face.Indices[i]]));
                                     break;
+                                case VertexAttributes.NullAttr:
+                                    break;
                                 default:
                                     throw new ArgumentException(string.Format("Unsupported vertex attribute {0}!", attr.ToString()));
                             }
@@ -139,8 +141,6 @@ namespace BMDExporter.BMD
                     }
                 }
             }
-
-            MasterAttributes.Add(VertexAttributes.NullAttr);
 
             // Just to make sure the attributes are in numerical order
             MasterAttributes.Sort();
