@@ -234,7 +234,7 @@ namespace BMDExporter.BMD
             WriteOffset(writer, 0x24);
 
             // This is a hack for writing numChanCtrls until more information is collected about it
-            writer.Write((byte)0);
+            writer.Write((byte)1);
 
             writer.Write("Thi".ToCharArray());
 
@@ -388,7 +388,7 @@ namespace BMDExporter.BMD
             WriteOffset(writer, 0x58);
 
             // This is a hack for writing numTevStages until more information is collected about it
-            writer.Write((byte)2);
+            writer.Write((byte)1);
 
             writer.Write("Thi".ToCharArray());
 

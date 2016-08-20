@@ -105,8 +105,7 @@ namespace BMDExporter.Materials
             TexMatrix2 = new TexMatrix[20];
             Textures = new BinaryTextureImage[8];
             TevOrders = new TevOrder[16];
-            TevOrders[0] = new TevOrder(GXTexCoordSlot.TexCoord0, 0, GXColorChannelId.Color0A0);
-            TevOrders[1] = new TevOrder(GXTexCoordSlot.TexCoord0, 0, GXColorChannelId.ColorNull);
+            TevOrders[0] = new TevOrder(GXTexCoordSlot.Null, 0, GXColorChannelId.Color0A0);
             ColorSels = new GXKonstColorSel[16];
             AlphaSels = new GXKonstAlphaSel[16];
             for (int i = 0; i < 16; i++)
@@ -117,11 +116,8 @@ namespace BMDExporter.Materials
             TevColors = new Color?[4] { new Color(0, 0, 0, 1), new Color(1, 1, 1, 1), new Color(0, 0, 0, 0), new Color(1, 1, 1, 1) };
             KonstColors = new Color?[4] { new Color(1, 1, 1, 1), new Color(1, 1, 1, 1), new Color(1, 1, 1, 1), new Color(1, 1, 1, 1) };
             TevStages = new TevStage[16];
-            TevStages[0] = new TevStage(new GXCombineColorInput[] { GXCombineColorInput.A1, GXCombineColorInput.Konst, GXCombineColorInput.RasColor, GXCombineColorInput.Zero },
-                GXTevOp.Add, GXTevBias.Zero, GXTevScale.Scale_1, true, 0, new GXCombineAlphaInput[] { GXCombineAlphaInput.Zero, GXCombineAlphaInput.TexAlpha, GXCombineAlphaInput.RasAlpha, GXCombineAlphaInput.Zero, },
-                GXTevOp.Add, GXTevBias.Zero, GXTevScale.Scale_1, true, 0);
-            TevStages[1] = new TevStage(new GXCombineColorInput[] { GXCombineColorInput.Zero, GXCombineColorInput.TexColor, GXCombineColorInput.ColorPrev, GXCombineColorInput.Zero },
-                GXTevOp.Add, GXTevBias.Zero, GXTevScale.Scale_1, true, 0, new GXCombineAlphaInput[] { GXCombineAlphaInput.Zero, GXCombineAlphaInput.Konst, GXCombineAlphaInput.AlphaPrev, GXCombineAlphaInput.Zero, },
+            TevStages[0] = new TevStage(new GXCombineColorInput[] { GXCombineColorInput.Zero, GXCombineColorInput.Zero, GXCombineColorInput.Zero, GXCombineColorInput.Zero },
+                GXTevOp.Add, GXTevBias.Zero, GXTevScale.Scale_1, true, 0, new GXCombineAlphaInput[] { GXCombineAlphaInput.RasAlpha, GXCombineAlphaInput.Zero, GXCombineAlphaInput.Zero, GXCombineAlphaInput.Zero, },
                 GXTevOp.Add, GXTevBias.Zero, GXTevScale.Scale_1, true, 0);
             SwapModes = new TevSwapMode[16];
             SwapModes[0] = new TevSwapMode();
@@ -135,27 +131,34 @@ namespace BMDExporter.Materials
             ZCompLoc = true;
             Dither = true;
 
+            // Add texture to TEV stage data if there is one
+            if (source.HasTextureDiffuse)
+            {
+                TevStages[0].ColorIn[1] = GXCombineColorInput.TexColor;
+                TevStages[0].ColorIn[2] = GXCombineColorInput.TexColor;
+
+                TevOrders[0].TexCoordId = GXTexCoordSlot.TexCoord0;
+                TevOrders[0].TexMap = 0;
+                TevOrders[0].ChannelId = GXColorChannelId.Color0A0;
+            }
+
             // Add vertex colors to the shader if there are any
-            if (srcBatch.VertexColors.Count() > 0)
+            if (srcBatch.VertexColors[0].Count > 0)
             {
                 ChannelControls = new ChannelControl[4]
                 {
-                    new ChannelControl(false, GXColorSrc.Vertex, GXLightId.Light0, GXDiffuseFn.Clamp, GXAttenuationFn.Spot, GXColorSrc.Register),
-                    new ChannelControl(false, GXColorSrc.Vertex, GXLightId.Light1, GXDiffuseFn.Clamp, GXAttenuationFn.Spot, GXColorSrc.Register),
-                    new ChannelControl(false, GXColorSrc.Vertex, GXLightId.Light2, GXDiffuseFn.Clamp, GXAttenuationFn.Spot, GXColorSrc.Register),
-                    new ChannelControl(false, GXColorSrc.Vertex, GXLightId.Light3, GXDiffuseFn.Clamp, GXAttenuationFn.Spot, GXColorSrc.Register),
+                    new ChannelControl(false, GXColorSrc.Vertex, GXLightId.None, GXDiffuseFn.Clamp, GXAttenuationFn.Spot, GXColorSrc.Register),
+                    new ChannelControl(false, GXColorSrc.Vertex, GXLightId.None, GXDiffuseFn.Clamp, GXAttenuationFn.Spot, GXColorSrc.Register),
+                    new ChannelControl(true, GXColorSrc.Register, GXLightId.None, GXDiffuseFn.Signed, GXAttenuationFn.Spec, GXColorSrc.Register),
+                    new ChannelControl(false, GXColorSrc.Register, GXLightId.None, GXDiffuseFn.None, GXAttenuationFn.None, GXColorSrc.Register),
                 };
-            }
 
-            // Remove texture references from the shader if there's no texture
-            if (!source.HasTextureDiffuse)
-            {
-                TevStages[0] = new TevStage(new GXCombineColorInput[] { GXCombineColorInput.A1, GXCombineColorInput.Konst, GXCombineColorInput.RasColor, GXCombineColorInput.Zero },
-                    GXTevOp.Add, GXTevBias.Zero, GXTevScale.Scale_1, true, 0, new GXCombineAlphaInput[] { GXCombineAlphaInput.Zero, GXCombineAlphaInput.Konst, GXCombineAlphaInput.RasAlpha, GXCombineAlphaInput.Zero, },
-                    GXTevOp.Add, GXTevBias.Zero, GXTevScale.Scale_1, true, 0);
-                TevStages[1] = new TevStage(new GXCombineColorInput[] { GXCombineColorInput.Zero, GXCombineColorInput.Konst, GXCombineColorInput.ColorPrev, GXCombineColorInput.Zero },
-                    GXTevOp.Add, GXTevBias.Zero, GXTevScale.Scale_1, true, 0, new GXCombineAlphaInput[] { GXCombineAlphaInput.Zero, GXCombineAlphaInput.Konst, GXCombineAlphaInput.AlphaPrev, GXCombineAlphaInput.Zero, },
-                    GXTevOp.Add, GXTevBias.Zero, GXTevScale.Scale_1, true, 0);
+                TevStages[1] = TevStages[0];
+                TevStages[1].ColorIn[2] = GXCombineColorInput.ColorPrev;
+
+                TevStages[0] = new TevStage(new GXCombineColorInput[] { GXCombineColorInput.C0, GXCombineColorInput.Konst, GXCombineColorInput.RasColor, GXCombineColorInput.Zero },
+                GXTevOp.Add, GXTevBias.Zero, GXTevScale.Scale_1, true, 0, new GXCombineAlphaInput[] { GXCombineAlphaInput.RasAlpha, source.HasTextureDiffuse ? GXCombineAlphaInput.TexAlpha : GXCombineAlphaInput.Zero, GXCombineAlphaInput.Zero, GXCombineAlphaInput.Zero, },
+                GXTevOp.Add, GXTevBias.Zero, GXTevScale.Scale_1, true, 0);
             }
         }
 

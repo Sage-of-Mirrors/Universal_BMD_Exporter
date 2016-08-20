@@ -23,7 +23,17 @@ namespace BMDExporter
             Scene scene = cont.ImportFile(inputFile);
 
             foreach (Mesh mesh in scene.Meshes)
-                Batches.Add(new Batch(mesh));
+            {
+                Matrix4x4 transform = Matrix4x4.Identity;
+
+                foreach(Node node in scene.RootNode.Children)
+                {
+                    if (node.Name == mesh.Name)
+                        transform = node.Transform;
+                }
+
+                Batches.Add(new Batch(mesh, transform));
+            }
 
             VTX1 vtx = new VTX1(Batches);
 
@@ -128,7 +138,7 @@ namespace BMDExporter
             using (MemoryStream sizeStream = new MemoryStream(fileBuffer.ToArray()))
             {
                 EndianBinaryWriter writer = new EndianBinaryWriter(sizeStream, Endian.Big);
-                writer.Seek(4, SeekOrigin.Begin);
+                writer.Seek(8, SeekOrigin.Begin);
                 writer.Write((int)sizeStream.Length);
 
                 fileBuffer.Clear(); // Clear original data
