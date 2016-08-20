@@ -134,12 +134,32 @@ namespace BMDExporter.Materials
             // Add texture to TEV stage data if there is one
             if (source.HasTextureDiffuse)
             {
-                TevStages[0].ColorIn[1] = GXCombineColorInput.TexColor;
-                TevStages[0].ColorIn[2] = GXCombineColorInput.TexColor;
+                string path = source.TextureDiffuse.FilePath;
+                if (!Path.IsPathRooted(path))
+                {
+                    // Get actual path
+                }
 
-                TevOrders[0].TexCoordId = GXTexCoordSlot.TexCoord0;
-                TevOrders[0].TexMap = 0;
-                TevOrders[0].ChannelId = GXColorChannelId.Color0A0;
+                string imageExt = Path.GetExtension(path).ToLower();
+                Bitmap imageData = null;
+
+                switch (imageExt)
+                {
+                    case ".png":
+                    case ".bmp":
+                        imageData = new Bitmap(path);
+                        break;
+                    case ".tga":
+                        imageData = TgaReader.Load(path);
+                        break;
+                    default:
+                        throw new ArgumentException(string.Format("Texture {0} was a {1}. Only PNG, BMP, or TGA images are supported!", path, imageExt));
+                }
+
+                if (imageData == null)
+                    throw new ArgumentException(string.Format("Texture {0} could not be loaded!", path));
+
+                SetTexture(Path.GetFileNameWithoutExtension(path), imageData);
             }
 
             // Add vertex colors to the shader if there are any
@@ -159,6 +179,8 @@ namespace BMDExporter.Materials
                 TevStages[0] = new TevStage(new GXCombineColorInput[] { GXCombineColorInput.C0, GXCombineColorInput.Konst, GXCombineColorInput.RasColor, GXCombineColorInput.Zero },
                 GXTevOp.Add, GXTevBias.Zero, GXTevScale.Scale_1, true, 0, new GXCombineAlphaInput[] { GXCombineAlphaInput.RasAlpha, source.HasTextureDiffuse ? GXCombineAlphaInput.TexAlpha : GXCombineAlphaInput.Zero, GXCombineAlphaInput.Zero, GXCombineAlphaInput.Zero, },
                 GXTevOp.Add, GXTevBias.Zero, GXTevScale.Scale_1, true, 0);
+
+                TevOrders[1] = new TevOrder(GXTexCoordSlot.TexCoord0, 0, GXColorChannelId.Color0A0);
             }
         }
 
@@ -251,19 +273,27 @@ namespace BMDExporter.Materials
                 tex = new BinaryTextureImage(texName, bmp, BinaryTextureImage.TextureFormats.CMPR);
             }
 
-            // Search for an open texture slot and if there is one, put the texture there
+            // Search for an open texture slot and if there is one, put the texture there,
+            // Include tex cooord gens,
+            // Include a tex matrix,
+            // And configure tev orders
             for (int i = 0; i < 8; i++)
             {
                 if (Textures[i] == null)
                 {
                     Textures[i] = tex;
+                    TexCoord1Gens[i] = new TexCoordGen(GXTexGenType.Matrix2x4, GXTexGenSrc.Tex0 + i, GXTexMatrix.TexMtx0);
+                    TexMatrix1[i] = new TexMatrix();
+
+                    TevOrders[i].TexCoordId = GXTexCoordSlot.TexCoord0 + i;
+                    TevOrders[i].TexMap = (byte)i;
+                    TevOrders[i].ChannelId = GXColorChannelId.Color0A0;
                     break;
                 }
             }
 
-            TexCoord1Gens[0] = new TexCoordGen((GXTexGenType)1, (GXTexGenSrc)4, GXTexMatrix.TexMtx0);
-            TexCoord1Gens[1] = new TexCoordGen((GXTexGenType)1, (GXTexGenSrc)4, GXTexMatrix.TexMtx0);
-            TexMatrix1[0] = new TexMatrix();
+            TevStages[0].ColorIn[1] = GXCombineColorInput.TexColor;
+            TevStages[0].ColorIn[2] = GXCombineColorInput.TexColor;
         }
 
         private bool HasAlpha(Bitmap source)

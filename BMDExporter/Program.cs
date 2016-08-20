@@ -15,7 +15,7 @@ namespace BMDExporter
     {
         static void Main(string[] args)
         {
-            string inputFile = @"C:\Program Files (x86)\SZS Tools\nouvs.fbx";
+            string inputFile = @"C:\Program Files (x86)\SZS Tools\texturedmodel.fbx";
 
             List<Batch> Batches = new List<Batch>(); // A list of the meshes in the scene
 
