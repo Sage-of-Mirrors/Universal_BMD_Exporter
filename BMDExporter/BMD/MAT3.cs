@@ -104,6 +104,10 @@ namespace BMDExporter.BMD
         /// </summary>
         private List<Material> Materials;
 
+        private List<byte> NumColorChannelsBlock;
+        private List<byte> NumTexGensBlock;
+        private List<byte> NumTevSTagesBlock;
+
         public MAT3()
         {
             m_indirectTexBlock = new List<IndirectTexturing>();
@@ -159,6 +163,9 @@ namespace BMDExporter.BMD
             m_zModeBlock = new List<ZMode>();
             m_zCompLocBlock = new List<bool>();
             m_ditherBlock = new List<bool>();
+            NumColorChannelsBlock = new List<byte>();
+            NumTexGensBlock = new List<byte>();
+            NumTevSTagesBlock = new List<byte>();
 
             Materials = new List<Material>();
             #endregion
@@ -233,10 +240,10 @@ namespace BMDExporter.BMD
             // Write number of channel controls offset
             WriteOffset(writer, 0x24);
 
-            // This is a hack for writing numChanCtrls until more information is collected about it
-            writer.Write((byte)1);
+            foreach (byte by in NumColorChannelsBlock)
+                writer.Write(by);
 
-            writer.Write("Thi".ToCharArray());
+            Pad32(writer);
 
             if (m_channelControlBlock.Count != 0)
             {
@@ -278,8 +285,10 @@ namespace BMDExporter.BMD
             // Write numTexCoord1Gen offset
             WriteOffset(writer, 0x34);
 
-            writer.Write((byte)1);
-            writer.Write("Thi".ToCharArray());
+            foreach (byte by in NumTexGensBlock)
+                writer.Write(by);
+
+            Pad32(writer);
 
             // Write tex coord 1 gen block
             if (m_texCoord1GenBlock.Count != 0)
@@ -387,10 +396,10 @@ namespace BMDExporter.BMD
             // Write num tev stage offset in header here
             WriteOffset(writer, 0x58);
 
-            // This is a hack for writing numTevStages until more information is collected about it
-            writer.Write((byte)2);
+            foreach (byte by in NumTevSTagesBlock)
+                writer.Write(by);
 
-            writer.Write("Thi".ToCharArray());
+            Pad32(writer);
 
             if (m_tevStageBlock.Count != 0)
             {
@@ -529,6 +538,15 @@ namespace BMDExporter.BMD
                 if (!m_cullModeBlock.Contains(mat.CullMode))
                     m_cullModeBlock.Add(mat.CullMode);
 
+                if (!NumColorChannelsBlock.Contains(mat.ColorChannelControlsCount))
+                    NumColorChannelsBlock.Add(mat.ColorChannelControlsCount);
+
+                if (!NumTexGensBlock.Contains(mat.NumTexGensCount))
+                    NumTexGensBlock.Add(mat.NumTexGensCount);
+
+                if (!NumTevSTagesBlock.Contains(mat.NumTevStagesCount))
+                    NumTevSTagesBlock.Add(mat.NumTevStagesCount);
+
                 // Material colors
                 for (int i = 0; i < 2; i++)
                 {
@@ -666,11 +684,11 @@ namespace BMDExporter.BMD
             // Cull mode
             writer.Write((byte)m_cullModeBlock.IndexOf(mat.CullMode));
             // NumChannelControls
-            writer.Write((byte)0);
+            writer.Write((byte)NumColorChannelsBlock.IndexOf(mat.ColorChannelControlsCount));
             // NumTexGens
-            writer.Write((byte)0);
+            writer.Write((byte)NumTexGensBlock.IndexOf(mat.NumTexGensCount));
             // NumTevStages
-            writer.Write((byte)0);
+            writer.Write((byte)NumTevSTagesBlock.IndexOf(mat.NumTevStagesCount));
             // ZCompLoc
             writer.Write((byte)m_zCompLocBlock.IndexOf(mat.ZCompLoc));
             // ZMode

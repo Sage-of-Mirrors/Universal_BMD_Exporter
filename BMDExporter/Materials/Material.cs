@@ -15,6 +15,9 @@ namespace BMDExporter.Materials
     {
         public string Name;
         public byte Flag;
+        public byte ColorChannelControlsCount;
+        public byte NumTexGensCount;
+        public byte NumTevStagesCount;
         public IndirectTexturing IndTexEntry;
         public GXCullMode CullMode;
         public Color?[] MaterialColors;
@@ -181,6 +184,24 @@ namespace BMDExporter.Materials
                 GXTevOp.Add, GXTevBias.Zero, GXTevScale.Scale_1, true, 0);
 
                 TevOrders[1] = new TevOrder(GXTexCoordSlot.TexCoord0, 0, GXColorChannelId.Color0A0);
+            }
+
+            foreach (ChannelControl chan in ChannelControls)
+            {
+                if (chan != null)
+                    ColorChannelControlsCount++;
+            }
+
+            foreach (TexCoordGen gen in TexCoord1Gens)
+            {
+                if (gen != null)
+                    NumTexGensCount++;
+            }
+
+            foreach (TevStage stage in TevStages)
+            {
+                if (stage != null)
+                    NumTevStagesCount++;
             }
         }
 
