@@ -270,7 +270,7 @@ namespace BMDExporter.BMD
                         foreach (Vector3D vec in VertexUVWs[texID])
                         {
                             writer.Write((short)(vec.X / scaleFactor));
-                            writer.Write((short)(vec.Y / scaleFactor));
+                            writer.Write((short)((1 - vec.Y) / scaleFactor));
                         }
                         break;
                 }

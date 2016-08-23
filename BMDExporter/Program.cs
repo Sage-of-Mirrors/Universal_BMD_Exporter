@@ -15,12 +15,13 @@ namespace BMDExporter
     {
         static void Main(string[] args)
         {
-            string inputFile = @"C:\Program Files (x86)\SZS Tools\CustomTestRoom\CustomTestRoom.fbx";
+            string inputFile = @"C:\Program Files (x86)\SZS Tools\skinned_boxsnake_reexported.FBX";
 
             List<Batch> Batches = new List<Batch>(); // A list of the meshes in the scene
 
             AssimpContext cont = new AssimpContext();
-            Scene scene = cont.ImportFile(inputFile);
+            // We flip the winding order of the meshes because BMD and BDL are clockwise rather than counter-clockwise
+            Scene scene = cont.ImportFile(inputFile, PostProcessSteps.FlipWindingOrder);
 
             foreach (Mesh mesh in scene.Meshes)
             {
@@ -47,7 +48,7 @@ namespace BMDExporter
 
             INF1 inf = new INF1(Batches);
 
-            MAT3 mat = new MAT3(scene.Materials, Batches);
+            MAT3 mat = new MAT3(scene.Materials, inputFile, Batches);
 
             TEX1 tex = new TEX1();
 

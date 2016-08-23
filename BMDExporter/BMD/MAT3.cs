@@ -137,7 +137,7 @@ namespace BMDExporter.BMD
             Materials = new List<Material>();
         }
 
-        public MAT3(List<Assimp.Material> modelMaterials, List<Batch> batches)
+        public MAT3(List<Assimp.Material> modelMaterials, string modelPath, List<Batch> batches)
         {
             #region List initialization
             m_indirectTexBlock = new List<IndirectTexturing>();
@@ -172,7 +172,7 @@ namespace BMDExporter.BMD
 
             foreach (Batch bat in batches)
             {
-                Materials.Add(new Material(modelMaterials[bat.MaterialIndex], bat));
+                Materials.Add(new Material(modelMaterials[bat.MaterialIndex], modelPath, bat));
             }
         }
         /// <summary>

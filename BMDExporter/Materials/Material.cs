@@ -86,7 +86,7 @@ namespace BMDExporter.Materials
             ZMode = new ZMode();
         }
 
-        public Material(Assimp.Material source, Batch srcBatch)
+        public Material(Assimp.Material source, string modelPath, Batch srcBatch)
         {
             Name = srcBatch.Name;
             Flag = 1;
@@ -140,7 +140,13 @@ namespace BMDExporter.Materials
                 string path = source.TextureDiffuse.FilePath;
                 if (!Path.IsPathRooted(path))
                 {
-                    // Get actual path
+                    string modelDir = Path.GetDirectoryName(modelPath);
+                    string texPath = string.Format("{0}\\{1}", modelDir, path);
+
+                    if (File.Exists(texPath))
+                        path = texPath;
+                    else
+                        throw new ArgumentException(string.Format("Could not fined texture \"{0}\" at \"{1}\"!", path, texPath));
                 }
 
                 string imageExt = Path.GetExtension(path).ToLower();
