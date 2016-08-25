@@ -25,15 +25,7 @@ namespace BMDExporter
 
             foreach (Mesh mesh in scene.Meshes)
             {
-                Matrix4x4 transform = Matrix4x4.Identity;
-
-                foreach(Node node in scene.RootNode.Children)
-                {
-                    if (node.Name == mesh.Name)
-                        transform = node.Transform;
-                }
-
-                Batches.Add(new Batch(mesh, transform));
+                Batches.Add(new Batch(mesh));
             }
 
             VTX1 vtx = new VTX1(Batches);

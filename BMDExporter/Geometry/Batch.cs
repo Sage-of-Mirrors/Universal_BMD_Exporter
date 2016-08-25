@@ -30,7 +30,7 @@ namespace BMDExporter.Geometry
 
         }
 
-        public Batch(Mesh mesh, Matrix4x4 transform)
+        public Batch(Mesh mesh)
         {
             if (!mesh.HasVertices)
             {
