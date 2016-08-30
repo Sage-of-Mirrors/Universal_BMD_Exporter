@@ -88,7 +88,7 @@ namespace BMDExporter.Materials
 
         public Material(Assimp.Material source, string modelPath, Batch srcBatch)
         {
-            Name = srcBatch.Name;
+            Name = source.Name;
             Flag = 1;
             IndTexEntry = new IndirectTexturing();
             CullMode = GXCullMode.Back;
@@ -178,14 +178,14 @@ namespace BMDExporter.Materials
                 {
                     new ChannelControl(false, GXColorSrc.Vertex, GXLightId.None, GXDiffuseFn.Clamp, GXAttenuationFn.Spot, GXColorSrc.Register),
                     new ChannelControl(false, GXColorSrc.Vertex, GXLightId.None, GXDiffuseFn.Clamp, GXAttenuationFn.Spot, GXColorSrc.Register),
-                    new ChannelControl(true, GXColorSrc.Register, GXLightId.None, GXDiffuseFn.Signed, GXAttenuationFn.Spec, GXColorSrc.Register),
+                    new ChannelControl(false, GXColorSrc.Register, GXLightId.None, GXDiffuseFn.Signed, GXAttenuationFn.Spec, GXColorSrc.Register),
                     new ChannelControl(false, GXColorSrc.Register, GXLightId.None, GXDiffuseFn.None, GXAttenuationFn.None, GXColorSrc.Register),
                 };
 
                 TevStages[1] = TevStages[0];
                 TevStages[1].ColorIn[2] = GXCombineColorInput.ColorPrev;
 
-                TevStages[0] = new TevStage(new GXCombineColorInput[] { GXCombineColorInput.C0, GXCombineColorInput.Konst, GXCombineColorInput.RasColor, GXCombineColorInput.Zero },
+                TevStages[0] = new TevStage(new GXCombineColorInput[] { GXCombineColorInput.RasColor, GXCombineColorInput.Zero, GXCombineColorInput.Zero, GXCombineColorInput.Zero },
                 GXTevOp.Add, GXTevBias.Zero, GXTevScale.Scale_1, true, 0, new GXCombineAlphaInput[] { GXCombineAlphaInput.RasAlpha, source.HasTextureDiffuse ? GXCombineAlphaInput.TexAlpha : GXCombineAlphaInput.Zero, GXCombineAlphaInput.Zero, GXCombineAlphaInput.Zero, },
                 GXTevOp.Add, GXTevBias.Zero, GXTevScale.Scale_1, true, 0);
 
@@ -335,6 +335,24 @@ namespace BMDExporter.Materials
             }
 
             return false;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj.GetType() == typeof(Material))
+                return Compare(obj as Material);
+            else
+                return false;
+        }
+
+        private bool Compare(Material obj)
+        {
+            if ((Name == obj.Name) && (Flag == obj.Flag)
+                && (ColorChannelControlsCount == obj.ColorChannelControlsCount) && (NumTexGensCount == obj.NumTexGensCount)
+                && (NumTevStagesCount == obj.NumTevStagesCount) /*&& (IndTexEntry == obj.IndTexEntry)*/)
+                return true;
+            else
+                return false;
         }
     }
 }

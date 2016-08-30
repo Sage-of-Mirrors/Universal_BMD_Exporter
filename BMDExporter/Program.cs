@@ -15,13 +15,15 @@ namespace BMDExporter
     {
         static void Main(string[] args)
         {
-            string inputFile = @"C:\Program Files (x86)\SZS Tools\skinned_boxsnake_reexported.FBX";
+            string inputFile = @"C:\Program Files (x86)\SZS Tools\Chamber_of_Sages\Chamber of Sages.fbx";
 
             List<Batch> Batches = new List<Batch>(); // A list of the meshes in the scene
 
             AssimpContext cont = new AssimpContext();
             // We flip the winding order of the meshes because BMD and BDL are clockwise rather than counter-clockwise
             Scene scene = cont.ImportFile(inputFile, PostProcessSteps.FlipWindingOrder);
+
+            //Node skeletonRoot = GetSkeletonRoot(scene);
 
             foreach (Mesh mesh in scene.Meshes)
             {
@@ -146,6 +148,74 @@ namespace BMDExporter
                 writer.Write(fileBuffer.ToArray());
             }
         }
+
+        static Node GetSkeletonRoot(Scene scene)
+        {
+            // This will hold the names of the bones
+            List<string> boneNames = new List<string>();
+
+            // We're going to run through the meshes and see if they have bones.
+            // If they do, we'll grab the names and put them in our list
+            foreach (Mesh mesh in scene.Meshes)
+            {
+                if (mesh.HasBones)
+                {
+                    foreach (Bone bone in mesh.Bones)
+                        boneNames.Add(bone.Name);
+                }
+            }
+
+            // This is the node that eventually leads to the skeleton's root
+            // Assimp has a couple layers of transformation between the scene's root
+            // and the skeleton's root
+            Node boneTree = null;
+            string rootBoneName = "";
+
+            // The layers of translation for the skeleton have the first bone's name in them. So
+            // We'll check each node in the scene against each bone name we got earlier
+            // If we get a match, we've found the node that eventually reaches the boneTree!
+            foreach (Node node in scene.RootNode.Children)
+            {
+                foreach (string name in boneNames)
+                {
+                    if (node.Name.Contains(name))
+                    {
+                        boneTree = node;
+                        rootBoneName = name;
+                    }
+                }
+            }
+
+            if (boneTree == null)
+            {
+                // Something went wrong!
+            }
+
+            Node skeletonRoot = boneTree;
+
+            // Run through the transformation layers until we find a node that has only the root bone's name
+            while (true)
+            {
+                skeletonRoot = skeletonRoot.Children[0];
+                if (skeletonRoot.Name == rootBoneName)
+                    break;
+            }
+
+            // If the parent of the skeletonRoot has more than one child,
+            // That means that the skeleton has multiple branches.
+            // ...So, we're going to create a new world root and
+            // add the children to it
+            if (skeletonRoot.Parent.ChildCount > 1)
+            {
+                Node newWorldRoot = new Node("World_Root");
+                newWorldRoot.Children.AddRange(skeletonRoot.Parent.Children.ToArray());
+
+                skeletonRoot = newWorldRoot;
+            }
+
+            return skeletonRoot;
+        }
+
 
         static void WriteHeader(EndianBinaryWriter writer)
         {
