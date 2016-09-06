@@ -15,7 +15,7 @@ namespace BMDExporter
     {
         static void Main(string[] args)
         {
-            string inputFile = @"C:\Program Files (x86)\SZS Tools\Chamber_of_Sages\Chamber of Sages.fbx";
+            string inputFile = args[0];
 
             List<Batch> Batches = new List<Batch>(); // A list of the meshes in the scene
 
@@ -141,8 +141,10 @@ namespace BMDExporter
                 fileBuffer.AddRange(sizeStream.ToArray()); // Add data with size field attatched
             }
 
+            string outPath = Path.Combine(Path.GetDirectoryName(inputFile), Path.GetFileNameWithoutExtension(inputFile) + ".bmd");
+
             // Write final file
-            using (FileStream stream = new FileStream(@"C:\Program Files (x86)\SZS Tools\testModel.bmd", FileMode.Create, FileAccess.Write))
+            using (FileStream stream = new FileStream(outPath, FileMode.Create, FileAccess.Write))
             {
                 EndianBinaryWriter writer = new EndianBinaryWriter(stream, Endian.Big);
                 writer.Write(fileBuffer.ToArray());
