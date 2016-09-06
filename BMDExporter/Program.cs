@@ -13,9 +13,19 @@ namespace BMDExporter
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main(string[] args) 
         {
+            if (args.Length <= 0 || args[0] == "help" || args[0] == "h" || !File.Exists(args[0]))
+            {
+                DisplayUsageMessage();
+                return;
+            }
+
             string inputFile = args[0];
+            string outputFile = Path.Combine(Path.GetDirectoryName(inputFile), Path.GetFileNameWithoutExtension(inputFile) + ".bmd");
+
+            if (args.Length == 2)
+                outputFile = args[1];
 
             List<Batch> Batches = new List<Batch>(); // A list of the meshes in the scene
 
@@ -48,6 +58,8 @@ namespace BMDExporter
 
             List<byte> fileBuffer = new List<byte>();
 
+            Console.WriteLine("\nWriting header...");
+
             // Add header to fileBuffer
             using (MemoryStream headerStream = new MemoryStream())
             {
@@ -56,6 +68,8 @@ namespace BMDExporter
 
                 fileBuffer.AddRange(headerStream.ToArray());
             }
+
+            Console.WriteLine("Writing INF1...");
 
             // Add INF1 to fileBuffer
             using (MemoryStream inf1Stream = new MemoryStream())
@@ -66,6 +80,8 @@ namespace BMDExporter
                 fileBuffer.AddRange(inf1Stream.ToArray());
             }
 
+            Console.WriteLine("Writing VTX1...");
+
             // Add VTX1 to fileBuffer
             using (MemoryStream vtx1Stream = new MemoryStream())
             {
@@ -74,6 +90,8 @@ namespace BMDExporter
 
                 fileBuffer.AddRange(vtx1Stream.ToArray());
             }
+
+            Console.WriteLine("Writing EVP1...");
 
             // Add EVP1 to fileBuffer
             using (MemoryStream evp1Stream = new MemoryStream())
@@ -84,6 +102,8 @@ namespace BMDExporter
                 fileBuffer.AddRange(evp1Stream.ToArray());
             }
 
+            Console.WriteLine("Writing DRW1...");
+
             // Add DRW1 to fileBuffer
             using (MemoryStream drw1Stream = new MemoryStream())
             {
@@ -92,6 +112,8 @@ namespace BMDExporter
 
                 fileBuffer.AddRange(drw1Stream.ToArray());
             }
+
+            Console.WriteLine("Writing JNT1...");
 
             // Add JNT1 to fileBuffer
             using (MemoryStream jnt1Stream = new MemoryStream())
@@ -102,6 +124,8 @@ namespace BMDExporter
                 fileBuffer.AddRange(jnt1Stream.ToArray());
             }
 
+            Console.WriteLine("Writing SHP1...");
+
             // Add SHP1 to fileBuffer
             using (MemoryStream shp1Stream = new MemoryStream())
             {
@@ -110,6 +134,8 @@ namespace BMDExporter
 
                 fileBuffer.AddRange(shp1Stream.ToArray());
             }
+
+            Console.WriteLine("Writing MAT3...");
 
             // Add MAT3 to fileBuffer
             using (MemoryStream mat3Stream = new MemoryStream())
@@ -120,6 +146,8 @@ namespace BMDExporter
                 fileBuffer.AddRange(mat3Stream.ToArray());
             }
 
+            Console.WriteLine("Writing TEX1...");
+
             // Add TEX1 to fileBuffer
             using (MemoryStream tex1Stream = new MemoryStream())
             {
@@ -128,6 +156,8 @@ namespace BMDExporter
 
                 fileBuffer.AddRange(tex1Stream.ToArray());
             }
+
+            Console.WriteLine("Writing file size...");
 
             // Write file size
             using (MemoryStream sizeStream = new MemoryStream(fileBuffer.ToArray()))
@@ -141,14 +171,16 @@ namespace BMDExporter
                 fileBuffer.AddRange(sizeStream.ToArray()); // Add data with size field attatched
             }
 
-            string outPath = Path.Combine(Path.GetDirectoryName(inputFile), Path.GetFileNameWithoutExtension(inputFile) + ".bmd");
+            //string outPath = Path.Combine(Path.GetDirectoryName(inputFile), Path.GetFileNameWithoutExtension(inputFile) + ".bmd");
 
             // Write final file
-            using (FileStream stream = new FileStream(outPath, FileMode.Create, FileAccess.Write))
+            using (FileStream stream = new FileStream(outputFile, FileMode.Create, FileAccess.Write))
             {
                 EndianBinaryWriter writer = new EndianBinaryWriter(stream, Endian.Big);
                 writer.Write(fileBuffer.ToArray());
             }
+
+            Console.WriteLine("\nBMD written to {0}. Done!", outputFile);
         }
 
         static Node GetSkeletonRoot(Scene scene)
@@ -218,7 +250,6 @@ namespace BMDExporter
             return skeletonRoot;
         }
 
-
         static void WriteHeader(EndianBinaryWriter writer)
         {
             writer.Write("J3D2bmd3".ToCharArray());
@@ -228,6 +259,14 @@ namespace BMDExporter
             writer.Write("SVR3".ToCharArray()); // SVR3 is a dummy chunk. It's not included in the chunk count above
             for (int i = 0; i < 12; i++)
                 writer.Write(byte.MaxValue); // Write the 12 0xFF bytes after SVR3's tag
+        }
+
+        static void DisplayUsageMessage()
+        {
+            Console.WriteLine("\nUniversal BMD Exporter v0.1 written by Sage_of_Mirrors\nConverts FBX/OBJ/DAE/etc models to BMD format.");
+            Console.WriteLine("\nTwitter: @SageOfMirrors");
+            Console.WriteLine("Github: Sage-of-Mirrors");
+            Console.WriteLine("\nUsage: BMDExporter input_model_path [output_bmd_path]");
         }
     }
 }
