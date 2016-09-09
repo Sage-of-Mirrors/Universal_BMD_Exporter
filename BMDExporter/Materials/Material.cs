@@ -321,6 +321,7 @@ namespace BMDExporter.Materials
 
             TevStages[0].ColorIn[1] = GXCombineColorInput.TexColor;
             TevStages[0].ColorIn[2] = GXCombineColorInput.TexColor;
+            TevStages[0].AlphaIn[1] = GXCombineAlphaInput.TexAlpha;
         }
 
         private bool HasAlpha(Bitmap source)

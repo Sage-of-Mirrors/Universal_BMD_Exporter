@@ -65,11 +65,11 @@ namespace BMDExporter.BMD
                 // Return to bone
                 writer.Write((ushort)HierarchyDataTypes.EndNode);
                 writer.Write((short)0);
-
-                // Return to root
-                //writer.Write((ushort)HierarchyDataTypes.EndNode);
-                //writer.Write((short)0);
             }
+
+            // Return to root
+            writer.Write((ushort)HierarchyDataTypes.EndNode);
+            writer.Write((short)0);
 
             writer.Write((ushort)HierarchyDataTypes.Finish);
             writer.Write((short)0);

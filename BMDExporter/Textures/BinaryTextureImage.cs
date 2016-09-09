@@ -139,7 +139,7 @@ namespace BMDExporter.Textures
             if (format == TextureFormats.CMPR)
                 AlphaSetting = 0;
             else
-                AlphaSetting = 0xCC;
+                AlphaSetting = 0x1;
             Width = (ushort)bmp.Width;
             Height = (ushort)bmp.Height;
             WrapS = WrapModes.Repeat;
