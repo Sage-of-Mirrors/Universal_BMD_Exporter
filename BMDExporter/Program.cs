@@ -33,7 +33,7 @@ namespace BMDExporter
             // We flip the winding order of the meshes because BMD and BDL are clockwise rather than counter-clockwise
             Scene scene = cont.ImportFile(inputFile, PostProcessSteps.FlipWindingOrder);
 
-            //Node skeletonRoot = GetSkeletonRoot(scene);
+            Node skeletonRoot = GetSkeletonRoot(scene);
 
             foreach (Mesh mesh in scene.Meshes)
             {
@@ -180,7 +180,7 @@ namespace BMDExporter
                 writer.Write(fileBuffer.ToArray());
             }
 
-            Console.WriteLine("\nBMD written to {0}. Done!", outputFile);
+            Console.WriteLine("\nBMD written to {0}./nDone!", outputFile);
         }
 
         static Node GetSkeletonRoot(Scene scene)
@@ -195,7 +195,10 @@ namespace BMDExporter
                 if (mesh.HasBones)
                 {
                     foreach (Bone bone in mesh.Bones)
-                        boneNames.Add(bone.Name);
+                    {
+                        if (!boneNames.Contains(bone.Name))
+                            boneNames.Add(bone.Name);
+                    }
                 }
             }
 
@@ -230,16 +233,16 @@ namespace BMDExporter
             // Run through the transformation layers until we find a node that has only the root bone's name
             while (true)
             {
-                skeletonRoot = skeletonRoot.Children[0];
                 if (skeletonRoot.Name == rootBoneName)
                     break;
+                skeletonRoot = skeletonRoot.Children[0];
             }
 
             // If the parent of the skeletonRoot has more than one child,
             // That means that the skeleton has multiple branches.
             // ...So, we're going to create a new world root and
             // add the children to it
-            if (skeletonRoot.Parent.ChildCount > 1)
+            if (skeletonRoot.Parent.ChildCount > 1 && skeletonRoot.Parent.Name != "RootNode")
             {
                 Node newWorldRoot = new Node("World_Root");
                 newWorldRoot.Children.AddRange(skeletonRoot.Parent.Children.ToArray());

@@ -145,18 +145,6 @@ namespace BMDExporter.BMD
 
             // Just to make sure the attributes are in numerical order
             MasterAttributes.Sort();
-
-            Matrix4 testMat = Matrix4.CreateTranslation(0f, 0f, 0f)
-                * Matrix4.CreateFromAxisAngle(Vector3.UnitX, (float)-Math.PI/2)
-                * Matrix4.CreateScale(1f, 1f, 1f);
-
-            for (int i = 0; i < VertexPositions.Count; i++)
-            {
-                Vector3 tkVec = new Vector3(VertexPositions[i].X, VertexPositions[i].Y, VertexPositions[i].Z);
-                tkVec = Vector3.Transform(tkVec, testMat);
-
-                VertexPositions[i] = new Vector3D(tkVec.X, tkVec.Y, tkVec.Z);
-            }
         }
 
         public void WriteVTX1(EndianBinaryWriter writer)

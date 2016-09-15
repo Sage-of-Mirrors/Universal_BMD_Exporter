@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Assimp;
+using OpenTK;
 
 namespace BMDExporter.Geometry
 {
@@ -51,6 +52,20 @@ namespace BMDExporter.Geometry
 
             ActiveAttributes.Add(VertexAttributes.Position);
             VertexPositions = mesh.Vertices;
+
+            // Most modern modeling programs have the Z-axis as up.
+            // This matrix will rotate the vertexes so that the Y-axis is up.
+            Matrix4 rotateMat = Matrix4.CreateTranslation(0f, 0f, 0f)
+                              * Matrix4.CreateFromAxisAngle(Vector3.UnitX, (float)-Math.PI / 2)
+                              * Matrix4.CreateScale(1f, 1f, 1f);
+
+            for (int i = 0; i < VertexPositions.Count; i++)
+            {
+                Vector3 tkVec = new Vector3(VertexPositions[i].X, VertexPositions[i].Y, VertexPositions[i].Z);
+                tkVec = Vector3.Transform(tkVec, rotateMat);
+
+                VertexPositions[i] = new Vector3D(tkVec.X, tkVec.Y, tkVec.Z);
+            }
 
             Faces = mesh.Faces;
 
