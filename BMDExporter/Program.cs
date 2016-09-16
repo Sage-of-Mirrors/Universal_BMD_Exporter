@@ -33,7 +33,7 @@ namespace BMDExporter
             // We flip the winding order of the meshes because BMD and BDL are clockwise rather than counter-clockwise
             Scene scene = cont.ImportFile(inputFile, PostProcessSteps.FlipWindingOrder);
 
-            Node skeletonRoot = GetSkeletonRoot(scene);
+            //Node skeletonRoot = GetSkeletonRoot(scene);
 
             foreach (Mesh mesh in scene.Meshes)
             {
