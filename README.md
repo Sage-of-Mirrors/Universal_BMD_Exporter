@@ -9,10 +9,4 @@ Currently, the exporter supports the following attributes:
  * Vertex colors (Up to 2 colors per vertex)
  * Normals
 
-These attributes are currently not supported, but will likely be in the future:
-
- * Skeleton support
-
-These are things that are ideas, but may not be implemented:
-
- * Dummy MDL3 chunk for BDL compatibility
+It was originally intended that Universal BMD Exporter would support skinned meshes, but this has been dropped in favor of including it in a newer BMD exporter, BMDCubed. While there is no release yet, the repo for BMDCubed can be found here: https://github.com/Sage-of-Mirrors/BMDCubed
